@@ -50,7 +50,11 @@ public:
 
 public:
 	void insert(int x);
-	bool search(int x);
+	bool search(int x)
+	{
+		return this->find_pred_node(x)->next[0];
+	}
+
 	bool remove(int x);
 };
 
