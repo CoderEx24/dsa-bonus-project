@@ -5,6 +5,7 @@
 #define MAX_LEVEL     10
 
 #include <random>
+#include <iostream>
 
 struct SkipListNode
 {
@@ -13,8 +14,8 @@ struct SkipListNode
 		this->data = x;
 		this->next = new SkipListNode* [l];
 		
-		for (int i = 0; i < MAX_LIST_SIZE; i ++)
-			this->next = nullptr;
+		for (int i = 0; i < l; i ++)
+			this->next[i] = nullptr;
 	}
 
 	int data;
@@ -27,11 +28,6 @@ class SkipList
 	SkipListNode *sentinel;
 
 public:
-	SkipList(): h(MAX_LEVEL)
-	{
-		this->sentinel = new SkipListNode(0, MAX_LEVEL);
-	}
-	
 	SkipListNode* find_pred_node(int x)
 	{
 		auto u = this->sentinel;
@@ -49,12 +45,34 @@ public:
 	}
 
 public:
+	SkipList(): h(MAX_LEVEL)
+	{
+		this->sentinel = new SkipListNode(0, MAX_LEVEL);
+	}
+	
+	void print()
+	{
+		for (int i = 0; i < this->h; i ++)
+		{
+			auto node = this->sentinel;
+			if (!node)
+				std::cout << "NULL";
+			
+			while (node)
+			{
+				std::cout << node->data << "->";
+				node = node->next[i];
+			}
+			std::cout << '\n';
+		}
+	}
+
 	void insert(int x)
 	{
 		auto u = this->sentinel;
 		auto stack = new SkipListNode* [MAX_LEVEL + MAX_LIST_SIZE];
 
-		for (int i = this->h; i >= 0; i --)
+		for (int i = this->h - 1; i >= 0; i --)
 		{
 			while (u->next[i] && u->next[i]->data < x)
 				u = u->next[i];
@@ -73,6 +91,7 @@ public:
 			new_node->next[i] = stack[i]->next[i];
 			stack[i]->next[i] = new_node;
 		}
+		delete[] stack;
 	}
 
 	bool search(int x)
