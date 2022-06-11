@@ -2,17 +2,17 @@
 #define   SKIPLIST_H
 
 #include <random>
+template<class T_>
+struct SkipListNode
+{
+	T_ data;
+	SkipListNode **next;	
+};
+
 
 template<class T>
 class SkipList
 {
-	template<class T_>
-	struct SkipListNode
-	{
-		T_ data;
-		SkipListNode **next;	
-	};
-
 	SkipListNode<T> sentinel;
 	int h;
 
