@@ -43,7 +43,10 @@ public:
 		return u;
 	}
 
-	unsigned int pick_height();
+	unsigned int pick_height()
+	{
+		return random() % MAX_LEVEL;
+	}
 
 public:
 	void insert(int x);
