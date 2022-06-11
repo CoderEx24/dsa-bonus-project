@@ -32,7 +32,17 @@ public:
 		this->sentinel = new SkipListNode;
 	}
 	
-	SkipListNode* find_pred_node(int x);
+	SkipListNode* find_pred_node(int x)
+	{
+		auto u = this->sentinel;
+
+		for (int i = this->h; i >= 0; i --)
+			while(u->next[i] && u->next[i]->data < x)
+				u = u->next[i];
+
+		return u;
+	}
+
 	unsigned int pick_height();
 
 public:
