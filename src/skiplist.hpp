@@ -8,10 +8,10 @@
 
 struct SkipListNode
 {
-	SkipListNode()
+	SkipListNode(int x, int l)
 	{
-		this->data = 0;
-		this->next = new SkipListNode* [MAX_LEVEL];
+		this->data = x;
+		this->next = new SkipListNode* [l];
 		
 		for (int i = 0; i < MAX_LIST_SIZE; i ++)
 			this->next = nullptr;
@@ -27,9 +27,9 @@ class SkipList
 	SkipListNode *sentinel;
 
 public:
-	SkipList(): h(0)
+	SkipList(): h(MAX_LEVEL)
 	{
-		this->sentinel = new SkipListNode;
+		this->sentinel = new SkipListNode(0, MAX_LEVEL);
 	}
 	
 	SkipListNode* find_pred_node(int x)
@@ -49,7 +49,32 @@ public:
 	}
 
 public:
-	void insert(int x);
+	void insert(int x)
+	{
+		auto u = this->sentinel;
+		auto stack = new SkipListNode* [MAX_LEVEL + MAX_LIST_SIZE];
+
+		for (int i = this->h; i >= 0; i --)
+		{
+			while (u->next[i] && u->next[i]->data < x)
+				u = u->next[i];
+			
+			if (u->next[i] && u->next[i]->data == x)
+				return;
+
+			stack[i] = u;
+		}
+
+		unsigned int h = this->pick_height();
+		auto new_node = new SkipListNode(x, h); 
+
+		for (int i = 0; i < h; i ++)
+		{
+			new_node->next[i] = stack[i]->next[i];
+			stack[i]->next[i] = new_node;
+		}
+	}
+
 	bool search(int x)
 	{
 		return this->find_pred_node(x)->next[0];
