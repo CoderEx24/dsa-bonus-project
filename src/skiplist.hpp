@@ -32,7 +32,7 @@ public:
 	{
 		auto u = this->sentinel;
 
-		for (int i = this->h; i >= 0; i --)
+		for (int i = this->h - 1; i >= 0; i --)
 			while(u->next[i] && u->next[i]->data < x)
 				u = u->next[i];
 
@@ -96,10 +96,31 @@ public:
 
 	bool search(int x)
 	{
-		return this->find_pred_node(x)->next[0];
+		auto u = this->find_pred_node(x);
+		return u->next[0] && u->next[0]->data == x;
 	}
 
-	bool remove(int x);
+	bool remove(int x)
+	{
+		bool removed = false;
+		auto u = this->sentinel;
+		for (int i = this->h - 1; i >= 0; i --)
+		{
+			while(u->next[i] && u->next[i]->data < x)
+				u = u->next[i];
+			
+			if (u->next[i] && u->next[i]->data != x)
+				continue;
+			
+			removed = true;
+			u->next[i] = u->next[i]->next[i];
+			
+			if (u == this->sentinel && !u->next[i])
+				this->h--;
+
+		}
+
+	}
 };
 
 #endif // SKIPLIST_H
