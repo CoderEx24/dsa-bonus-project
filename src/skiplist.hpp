@@ -109,16 +109,17 @@ public:
 			while(u->next[i] && u->next[i]->data < x)
 				u = u->next[i];
 			
-			if (u->next[i] && u->next[i]->data != x)
-				continue;
-			
-			removed = true;
-			u->next[i] = u->next[i]->next[i];
-			
-			if (u == this->sentinel && !u->next[i])
-				this->h--;
+			if (u->next[i] && u->next[i]->data == x)
+			{	
+				removed = true;
 
+				u->next[i] = u->next[i]->next[i];
+				
+				if (u == this->sentinel && !u->next[i])
+					this->h--;
+			}
 		}
+		return removed;
 
 	}
 };
