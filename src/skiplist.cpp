@@ -20,8 +20,16 @@ SkipListNode<T>* SkipList<T>::find_pred_node(T x)
 	SkipList<T>* u = this->sentinel;
 
 	for (int i = this->h; i >= 0; i--)
-	       while (u->next[i] != nullptr && u->next[i]->data < x)
+	       while (u->next[i] && u->next[i]->data < x)
 		       u = u->next[i];
 	
 	return u;
+}
+
+template<class T>
+bool SkipList<T>::search(T x)
+{
+	auto u = find_pred_node(x);
+	
+	return u.next[0];
 }
