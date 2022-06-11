@@ -1,25 +1,31 @@
 #ifndef   SKIPLIST_H
 #define   SKIPLIST_H
 
+#include <random>
+#include <vector>
+
 template<class T_>
 struct SkipListNode
 {
 	T_ data;
-	SkipListNode **next;	
+	std::vector<SkipListNode<T_>*> next;	
 };
 
 
 template<class T>
 class SkipList
 {
-	SkipListNode<T> sentinel;
+	SkipListNode<T>* sentinel;
 	int h;
 
 	SkipListNode<T>* find_pred_node(T x);
 	unsigned int pick_height();
 	
 public:
-	SkipList<T>(): h(0) {}
+	SkipList<T>(): h(0) 
+	{
+		this->sentinel = new SkipListNode<T>;
+	}
 
 	void insert(T x);
 	bool search(T x);
@@ -29,3 +35,96 @@ public:
 
 #endif // SKIPLIST_H 
 
+template<class T>
+unsigned int SkipList<T>::pick_height()
+{
+	int z = random();
+	int k = 0;
+
+	while(z | 1)
+	{
+		k++;
+		z /= 2;
+	}
+	return k;
+}
+
+template<class T>
+SkipListNode<T>* SkipList<T>::find_pred_node(T x)
+{
+	auto u = this->sentinel;
+
+	for (int i = this->h; i >= 0; i--)
+	       while (u->next[i] && u->next[i]->data < x)
+		       u = u->next[i];
+	
+	return u;
+}
+
+template<class T>
+bool SkipList<T>::search(T x)
+{
+	auto u = find_pred_node(x);
+	
+	return u->next[0];
+}
+
+template<class T>
+void SkipList<T>::insert(T x)
+{
+	auto u = this->sentinel;
+	std::vector<SkipListNode<T>*> stack;
+
+	for (int i = this->h; i >= 0; i --)
+	{
+		while (u->next[i] && u->next[i]->data < x)
+			u = u->next[i];
+		
+		if (u->next[i] && u->next[i]->data == x)
+			return;	
+		
+		stack.push_back(u);
+	}
+	
+	unsigned int h = this->pick_height();
+	auto new_node = new SkipListNode<T>;
+	new_node->data = x;
+
+	while (this->h < h)
+	{
+		this->h++;
+		stack.push_back(this->sentinel);
+	}
+
+	for (int i = 0; i < h; i ++)
+	{
+		new_node->next[i] = stack[i]->next[i];
+		stack[i]->next[i] = new_node;
+	}
+
+	return;
+	
+}
+
+template<class T>
+bool SkipList<T>::remove(T x)
+{
+	bool removed = false;
+	auto u = this->sentinel;
+	
+	for (int i = this->h; i >= 0; i --)
+	{
+		while (u->next[i] && u->next[i]->data < x)
+			u = u->next[i];
+
+		if (u->next[i] && u->next[i]->data == x)
+		{
+			removed = true;
+			u->next[i] = u->next[i]->next[i];
+
+			if (u == this->sentinel && !u->next[i])
+				this->h--;
+		}
+	}
+	return removed;
+}
