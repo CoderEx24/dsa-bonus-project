@@ -73,3 +73,25 @@ void SkipList<T>::insert(T x)
 	
 }
 
+template<class T>
+bool SkipList<T>::remove(T x)
+{
+	bool removed = false;
+	auto u = this->sentinel;
+	
+	for (int i = this->h; i >= 0; i --)
+	{
+		while (u->next[i] && u.next[i].data < x)
+			u = u->next[i];
+
+		if (u->next[i] && u.next[i].data == x)
+		{
+			removed = true;
+			u->next[i] = u->next[i]->next[i];
+
+			if (u == this->sentinel && !u->next[i])
+				this->h--;
+		}
+	}
+	return removed;
+}
