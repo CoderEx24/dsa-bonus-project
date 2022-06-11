@@ -1,5 +1,8 @@
 #include "skiplist.hpp"
 
+#include <random>
+#include <stack>
+
 template<class T>
 unsigned int SkipList<T>::pick_height()
 {
